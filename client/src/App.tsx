@@ -15,8 +15,6 @@ import Product from "./pages/Product";
 import MyOrders from "./pages/MyOrders";
 import OrderTracking from "./pages/OrderTracking";
 
-
-
 const App = () => {
   return (
     <Fragment>
