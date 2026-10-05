@@ -1,10 +1,12 @@
 import { Fragment } from "react";
 import { Outlet } from "react-router-dom";
 
+import Banner from "../components/Banner";
+
 const AppLayout = () => {
   return (
     <Fragment>
-      <p>Banner</p>
+      <Banner />
       <p>Navbar</p>
       <main className="min-h-screen">
         <Outlet />
