@@ -156,7 +156,7 @@ const CartSidebar = () => {
                 navigate("/checkout");
                 window.scrollTo(0, 0);
               }}
-              className=""
+              className="w-full py-3 bg-app-orange text-white font-semibold rounded-xl hover:bg-app-orange-dark transition-colors flex-center gap-2 active:scale-[0.98]"
             >
               Proceed to Checkout <ArrowRight className="size-4" />
             </button>

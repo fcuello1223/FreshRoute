@@ -15,6 +15,7 @@ import {
 import { Fragment, useState } from "react";
 import type { SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const Navbar = () => {
   const user: any = {
@@ -23,10 +24,7 @@ const Navbar = () => {
     isAdmin: true,
   };
 
-  const { cartCount, setCartOpen } = {
-    cartCount: 3,
-    setCartOpen: (_data: any) => {},
-  };
+  const { cartCount, setIsCartOpen } = useCart();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -85,7 +83,7 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             {/* Cart */}
             <button
-              onClick={() => setCartOpen(true)}
+              onClick={() => setIsCartOpen(true)}
               className="relative p-2 rounded-xl"
             >
               <ShoppingCart className="size-5 text-zinc-900" />
