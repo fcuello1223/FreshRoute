@@ -93,7 +93,7 @@ const MyOrders = () => {
                       <p className="text-sm font-medium text-app-green">
                         Order #{order._id.slice(-8).toUpperCase()}
                       </p>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center text-center mx-auto gap-2 mt-1">
                         <Calendar className="size-3 text-app-text-light" />
                         <span className="text-xs text-app-text-light">
                           {new Date(order.createdAt).toLocaleDateString(
@@ -134,7 +134,7 @@ const MyOrders = () => {
                   {/* Total Items and Price */}
                   <div className="flex items-center justify-between pt-3 text-xs">
                     <span className="text-app-text-light">{order.items.length} items</span>
-                    <span className="font-semibold text-app-green">{currency}{order.total.toFixed(2)}</span>
+                    <span className="font-semibold text-lg text-app-green">{currency}{order.total.toFixed(2)}</span>
                   </div>
                 </Link>
               );
