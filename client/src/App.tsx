@@ -11,9 +11,10 @@ import FlashDeals from "./pages/FlashDeals";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
-import Product from "./pages/Product";
+import SingleProduct from "./pages/SingleProduct";
 import MyOrders from "./pages/MyOrders";
 import OrderTracking from "./pages/OrderTracking";
+import SearchResults from "./pages/SearchResults";
 
 const App = () => {
   return (
@@ -37,7 +38,8 @@ const App = () => {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="products" element={<Products />} />
-          <Route path="products/:id" element={<Product />} />
+          <Route path="products/:id" element={<SingleProduct />} />
+          <Route path="search" element={<SearchResults />} />
           <Route path="deals" element={<FlashDeals />} />
           <Route element={<ProtectedRoute />}>
             <Route path="checkout" element={<Checkout />} />

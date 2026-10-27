@@ -20,7 +20,7 @@ import {
 import DummyReviewsSection from "../assets/DummyReviewsSection";
 import ProductCard from "../components/ProductCard";
 
-const Product = () => {
+const SingleProduct = () => {
   const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
 
   const { id } = useParams();
@@ -267,4 +267,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default SingleProduct;
