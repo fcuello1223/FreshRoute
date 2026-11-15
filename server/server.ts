@@ -10,6 +10,7 @@ import uploadRouter from "./routes/uploadRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import addressRouter from "./routes/addressRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
+import deliveryPartnerRouter from "./routes/deliveryPartnerRoutes.js";
 
 const app = express();
 
@@ -27,8 +28,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/orders", orderRouter);
-app.use('/api/addresses', addressRouter);
-app.use('/api/admin', adminRouter);
+app.use("/api/addresses", addressRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/delivery", deliveryPartnerRouter);
 
 // Set up the "/api/inngest" routes with the serve handler
 app.use("/api/inngest", serve({ client: inngest, functions: functions }));
