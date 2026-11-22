@@ -2,12 +2,13 @@ import { Home, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { dummyProducts } from "../assets/assets";
-
 import Loading from "../components/Loading";
 import ProductCard from "../components/ProductCard";
 
+import api from "../config/api";
+
 import type { Product } from "../types";
+import toast from "react-hot-toast";
 
 const SearchResults = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,12 +23,14 @@ const SearchResults = () => {
       return;
     }
     setIsLoading(true);
-    setProducts(
-      dummyProducts.filter((product: Product) =>
-        product.name.toLowerCase().includes(query.toLowerCase()),
-      ),
-    );
-    setIsLoading(false);
+
+    api
+      .get(`/products?search=${encodeURIComponent(query)}`)
+      .then((result) => setProducts(result.data.products))
+      .catch((error: any) => {
+        toast.error(error.response?.data?.message || error.message);
+      })
+      .finally(() => setIsLoading(false));
   }, [query]);
 
   return (
@@ -73,7 +76,7 @@ const SearchResults = () => {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((product) => {
-              return <ProductCard key={product._id} product={product} />;
+              return <ProductCard key={product.id} product={product} />;
             })}
           </div>
         )}

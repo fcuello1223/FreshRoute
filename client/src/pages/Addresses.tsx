@@ -49,7 +49,7 @@ const Addresses = () => {
       zip: inputAddress.zip,
       isDefault: inputAddress.isDefault,
     });
-    setEditingID(inputAddress._id);
+    setEditingID(inputAddress.id);
     setShowForm(true);
   };
 
@@ -104,7 +104,7 @@ const Addresses = () => {
             {addresses.map((address) => {
               return (
                 <AddressCard
-                  key={address._id}
+                  key={address.id}
                   address={address}
                   onEditHandler={onEditHandler}
                   setAddresses={setAddresses}

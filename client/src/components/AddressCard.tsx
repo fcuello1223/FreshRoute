@@ -18,7 +18,7 @@ const AddressCard = ({
 
   return (
     <div
-      key={address._id}
+      key={address.id}
       className="max-w-3xl bg-white rounded-2xl p-6 flex items-center justify-between"
     >
       {/* Left - Address Data */}
@@ -52,7 +52,7 @@ const AddressCard = ({
           <Pencil className="size-4" />
         </button>
         <button
-          onClick={() => handleDelete(address._id)}
+          onClick={() => handleDelete(address.id)}
           className="p-2 text-app-text-light hover:text-app-error hover:bg-red-50 transition-colors rounded-lg"
         >
           <Trash2 className="size-4" />

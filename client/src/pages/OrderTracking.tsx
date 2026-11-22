@@ -12,7 +12,7 @@ import type { Order } from "../types";
 import { ArrowLeft, MapPin, Phone } from "lucide-react";
 
 const OrderTracking = () => {
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || '$';
+  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
 
   const { id } = useParams();
 
@@ -26,7 +26,7 @@ const OrderTracking = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setOrder(dummyDashboardOrdersData.find((order) => order._id === id) as any);
+    setOrder(dummyDashboardOrdersData.find((order) => order.id === id) as any);
     setIsLoading(false);
   }, [id, navigate]);
 
@@ -52,7 +52,7 @@ const OrderTracking = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-semibold text-app-green">
-              Order #{order!._id.slice(-8).toUpperCase()}
+              Order #{order!.id.slice(-8).toUpperCase()}
             </h1>
             <p className="text-sm text-app-text-light mt-1">
               Placed on{" "}

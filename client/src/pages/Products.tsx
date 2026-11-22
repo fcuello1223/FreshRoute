@@ -4,11 +4,13 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import type { Product } from "../types";
 
-import { categoriesData, dummyProducts } from "../assets/assets";
+import { categoriesData } from "../assets/assets";
 
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
 import FilterPanel from "../components/FilterPanel";
+import api from "../config/api";
+import toast from "react-hot-toast";
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,12 +28,30 @@ const Products = () => {
 
   const fetchProducts = async () => {
     setIsLoading(true);
-    setProducts(
-      dummyProducts.filter(
-        (product) => product.category === category || category === "",
-      ),
-    );
-    setIsLoading(false);
+    try {
+      const params = new URLSearchParams();
+      if (category) {
+        params.set("category", category);
+      }
+      if (organic) {
+        params.set("organic", organic);
+      }
+      if (sort) {
+        params.set("sort", sort);
+      }
+      if (maxPrice) {
+        params.set("maxPrice", maxPrice);
+      }
+      params.set("page", String(page));
+      params.set("limit", "15");
+      const { data } = await api.get(`/products?${params.toString()}`);
+      setProducts(data.products);
+      setTotalPages(data.pages)
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message)
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const updateFilter = (key: string, value: string) => {
@@ -146,7 +166,7 @@ const Products = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-8">
                 {products.map((product) => {
                   if (product.stock > 0) {
-                    return <ProductCard key={product._id} product={product} />;
+                    return <ProductCard key={product.id} product={product} />;
                   }
                 })}
               </div>

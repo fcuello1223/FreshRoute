@@ -19,6 +19,7 @@ import {
 
 import DummyReviewsSection from "../assets/DummyReviewsSection";
 import ProductCard from "../components/ProductCard";
+import api from "../config/api";
 
 const SingleProduct = () => {
   const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
@@ -40,11 +41,19 @@ const SingleProduct = () => {
 
     window.scrollTo(0, 0);
 
-    const product = dummyProducts.find((product) => product._id === id);
-
-    setProduct(product!);
-    setRelatedProducts(dummyProducts.filter((product) => product._id !== id));
-    setIsLoading(false);
+    api
+      .get(`/products/${id}`)
+      .then(({ data }) => {
+        setProduct(data.product);
+        return api.get(`/products?category=${data.product.category}`);
+      })
+      .then(({ data }) => {
+        setRelatedProducts(
+          data.products.filter((product: Product) => product.id !== id),
+        );
+      })
+      .catch(() => navigate("/products"))
+      .finally(() => setIsLoading(false));
   }, [id, navigate]);
 
   if (isLoading) {
@@ -55,7 +64,7 @@ const SingleProduct = () => {
     return null;
   }
 
-  const cartItem = items.find((item) => item.product._id === product._id);
+  const cartItem = items.find((item) => item.product.id === product.id);
   const inCart = !!cartItem;
   const displayQuantity = inCart ? cartItem.quantity : localQuantity;
   const categoryLabel = product.category.replace(/-/g, " ");
@@ -63,9 +72,9 @@ const SingleProduct = () => {
   const handleMinus = () => {
     if (inCart) {
       if (cartItem.quantity > 1) {
-        updateQuantity(product._id, cartItem.quantity - 1);
+        updateQuantity(product.id, cartItem.quantity - 1);
       } else {
-        removeFromCart(product._id);
+        removeFromCart(product.id);
       }
     } else {
       setLocalQuantity(Math.max(1, localQuantity - 1));
@@ -74,7 +83,7 @@ const SingleProduct = () => {
 
   const handlePlus = () => {
     if (inCart) {
-      updateQuantity(product._id, cartItem.quantity + 1);
+      updateQuantity(product.id, cartItem.quantity + 1);
     } else {
       setLocalQuantity(localQuantity + 1);
     }
@@ -254,7 +263,7 @@ const SingleProduct = () => {
               {relatedProducts.slice(0, 5).map((relatedProduct) => {
                 return (
                   <ProductCard
-                    key={relatedProduct._id}
+                    key={relatedProduct.id}
                     product={relatedProduct}
                   />
                 );

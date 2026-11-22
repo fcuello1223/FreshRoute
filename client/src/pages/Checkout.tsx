@@ -28,7 +28,7 @@ const Checkout = () => {
   const [step, setStep] = useState("address");
   const [isLoading, setIsLoading] = useState(false);
   const [address, setAddress] = useState<Address>({
-    _id: "",
+    id: "",
     label: "Home",
     address: "",
     city: "",
@@ -63,7 +63,7 @@ const Checkout = () => {
         user.addresses[0];
 
       setAddress({
-        _id: defaultAddress._id,
+        id: defaultAddress.id,
         label: defaultAddress.label,
         address: defaultAddress.address,
         city: defaultAddress.city,

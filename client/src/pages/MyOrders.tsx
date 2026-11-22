@@ -82,8 +82,8 @@ const MyOrders = () => {
             {orders.map((order) => {
               return (
                 <Link
-                  key={order._id}
-                  to={`/orders/${order._id}`}
+                  key={order.id}
+                  to={`/orders/${order.id}`}
                   className="block max-w-4xl bg-white rounded-2xl p-5 hover:shadow transition-all"
                 >
                   {/* Order ID, Date and Status */}
@@ -91,7 +91,7 @@ const MyOrders = () => {
                     {/* Left */}
                     <div className="bg-app-cream-dark w-fit px-3 py-2 rounded-4xl">
                       <p className="text-sm font-medium text-app-green">
-                        Order #{order._id.slice(-8).toUpperCase()}
+                        Order #{order.id.slice(-8).toUpperCase()}
                       </p>
                       <div className="flex items-center text-center mx-auto gap-2 mt-1">
                         <Calendar className="size-3 text-app-text-light" />
@@ -133,8 +133,13 @@ const MyOrders = () => {
                   </div>
                   {/* Total Items and Price */}
                   <div className="flex items-center justify-between pt-3 text-xs">
-                    <span className="text-app-text-light">{order.items.length} items</span>
-                    <span className="font-semibold text-lg text-app-green">{currency}{order.total.toFixed(2)}</span>
+                    <span className="text-app-text-light">
+                      {order.items.length} items
+                    </span>
+                    <span className="font-semibold text-lg text-app-green">
+                      {currency}
+                      {order.total.toFixed(2)}
+                    </span>
                   </div>
                 </Link>
               );

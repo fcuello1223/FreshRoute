@@ -4,18 +4,32 @@ import type { SubmitEvent } from "react";
 import { Link } from "react-router-dom";
 
 import { heroSectionData } from "../assets/assets";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const Login = () => {
-  const [loginState, setLoginState] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [isLoginState, setIsLoginState] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login, register } = useAuth();
+
   const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
-    setLoading(true);
-    setTimeout(() => (window.location.href = "/"), 1000);
+    setIsLoading(true);
+    try {
+      if (isLoginState) {
+        await login(email, password);
+      } else {
+        await register(name, email, password);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message)
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,25 +62,25 @@ const Login = () => {
               </span>
             </Link>
             <h1 className="text-2xl font-semibold text-app-green mb-2">
-              {loginState
+              {isLoginState
                 ? "Sign in to your account"
                 : "Sign up for an account"}
             </h1>
             <p className="text-sm text-app-text-light">
-              {loginState
+              {isLoginState
                 ? "Don't have an account?"
                 : "Already have an account?"}
               <button
-                onClick={() => setLoginState(!loginState)}
+                onClick={() => setIsLoginState(!isLoginState)}
                 className="text-orange-500 ml-1 font-semibold hover:text-orange-600 transition-colors"
               >
-                {loginState ? "Create one" : "Sign in"}
+                {isLoginState ? "Create one" : "Sign in"}
               </button>
             </p>
           </div>
           {/* Login/Register form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {!loginState && (
+            {!isLoginState && (
               <label className="flex flex-col gap-1 text-sm">
                 Name{" "}
                 <div className="relative">
@@ -112,12 +126,12 @@ const Login = () => {
             </label>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="flex-center w-full py-3 bg-green-950 text-white font-semibold rounded-xl hover:bg-green-900 transition-colors disabled:opacity-50"
             >
-              {loading ? (
+              {isLoading ? (
                 <Loader2 className="animate-spin" />
-              ) : loginState ? (
+              ) : isLoginState ? (
                 "Sign in"
               ) : (
                 "Sign up"

@@ -1,19 +1,26 @@
 import { Zap } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-import { dummyProducts } from "../assets/assets";
-import Loading from "../components/Loading";
+import Loading from "../components/Loading"
+import ProductCard from "../components/ProductCard";
+
+import api from "../config/api";
 
 import type { Product } from "../types";
-import ProductCard from "../components/ProductCard";
 
 const FlashDeals = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setProducts(dummyProducts.filter((product: Product) => product.stock > 0));
-    setTimeout(() => setIsLoading(false), 1000);
+    api
+      .get("/products/flash-deals")
+      .then((res) => setProducts(res.data.products))
+      .catch((error: any) =>
+        toast.error(error.response.data.message || error?.message),
+      )
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -49,7 +56,7 @@ const FlashDeals = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
             {products.map((product) => {
               if (product.stock > 0) {
-                return <ProductCard key={product._id} product={product} />;
+                return <ProductCard key={product.id} product={product} />;
               }
             })}
           </div>
