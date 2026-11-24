@@ -45,7 +45,9 @@ export const createOrder = async (req: Request, res: Response) => {
 
   const subtotal = orderItems.reduce(
     (sum: number, item: any) => sum + item.price * item.quantity,
+    0,
   );
+  
   const deliveryFee = subtotal > 20 ? 0 : 1.99;
   const tax = Math.round(subtotal * 0.08 * 100) / 100;
   const total = Math.round((subtotal + deliveryFee + tax) * 100) / 100;

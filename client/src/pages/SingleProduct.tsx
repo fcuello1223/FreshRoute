@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 import type { Product } from "../types";
-import { dummyProducts } from "../assets/assets";
+
 import Loading from "../components/Loading";
 import {
   ArrowLeft,

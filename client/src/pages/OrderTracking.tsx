@@ -1,15 +1,15 @@
+import { ArrowLeft, MapPin, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { dummyDashboardOrdersData } from "../assets/assets";
 
 import Loading from "../components/Loading";
 import LiveMap from "../components/OrderTracking/LiveMap";
 import OrderOTP from "../components/OrderTracking/OrderOTP";
 import OrderTimeLine from "../components/OrderTracking/OrderTimeLine";
 
+import api from "../config/api";
+
 import type { Order } from "../types";
-import { ArrowLeft, MapPin, Phone } from "lucide-react";
 
 const OrderTracking = () => {
   const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
@@ -26,9 +26,42 @@ const OrderTracking = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setOrder(dummyDashboardOrdersData.find((order) => order.id === id) as any);
-    setIsLoading(false);
+    api
+      .get(`/orders/${id}`)
+      .then((response) => setOrder(response.data.order))
+      .catch(() => navigate("/orders"))
+      .finally(() => setIsLoading(false));
   }, [id, navigate]);
+
+  //Get live location every 10 seconds
+  useEffect(() => {
+    if (!order || ["Delivered", "Cancelled", "Placed"].includes(order.status)) {
+      return;
+    }
+    const fetchLocation = async () => {
+      try {
+        const { data } = await api.get(`/order/${id}/location`);
+        if (
+          data.liveLocation?.lat &&
+          data.liveLocation?.lng &&
+          data.liveLocation.updatedAt
+        ) {
+          setLiveLocation({
+            lat: data.liveLocation.lat,
+            lng: data.liveLocation.lng,
+          });
+        }
+
+        //Also update order status if it has changed
+        if (data.status && data.status !== order.status) {
+          setOrder((prev) => (prev ? { ...prev, status: data.status } : prev));
+        }
+      } catch (error) { }
+      fetchLocation();
+      const interval = setInterval(fetchLocation, 1000);
+      return () => clearInterval(interval);
+    };
+  }, [id, order?.status]);
 
   if (isLoading) {
     return <Loading />;
