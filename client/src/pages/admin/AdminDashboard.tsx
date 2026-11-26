@@ -6,8 +6,12 @@ import {
   ShoppingBagIcon,
   AlertTriangleIcon,
 } from "lucide-react";
+
+import { statusColors } from "../../assets/assets";
+
 import Loading from "../../components/Loading";
-import { dummyAdminDashboardData, statusColors } from "../../assets/assets";
+
+import api from "../../config/api";
 
 interface Stats {
   totalOrders: number;
@@ -24,10 +28,11 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      setStats(dummyAdminDashboardData);
-      setLoading(false);
-    }, 1000);
+    api
+      .get("/admin/stats")
+      .then((response) => setStats(response.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const cards = stats
@@ -51,7 +56,9 @@ export default function AdminDashboard() {
       ]
     : [];
 
-  if (loading) return <Loading />;
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="space-y-6">

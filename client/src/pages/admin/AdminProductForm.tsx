@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect, type SubmitEvent, Fragment } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "lucide-react";
-import { categoriesData, dummyProducts } from "../../assets/assets";
+import { categoriesData } from "../../assets/assets";
 import Loading from "../../components/Loading";
+import api from "../../config/api";
+import toast from "react-hot-toast";
 
 export default function AdminProductForm() {
   const { id } = useParams();
+
   const isEdit = Boolean(id);
+
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
@@ -26,20 +31,81 @@ export default function AdminProductForm() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isEdit) {
-        setFormData(() => dummyProducts.find((p) => p.id === id) as any);
+      try {
+        if (isEdit) {
+          const { data: prodData } = await api.get(`/products/${id}`);
+          const prod = prodData.product;
+          setFormData({
+            name: prod.name,
+            description: prod.description,
+            price: prod.price.toString(),
+            originalPrice: prod.originalPrice
+              ? prod.originalPrice.toString()
+              : "",
+            image: prod.image,
+            category: prod.category,
+            unit: prod.unit,
+            stock: prod.stock.toString(),
+            isOrganic: prod.isOrganic,
+          });
+        }
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || "Failed to load data");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, [id, isEdit]);
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: SubmitEvent) => {
+    event.preventDefault();
+    setSaving(true);
+
+    try {
+      let finalImageUrl = formData.image;
+
+      if (imageFile) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("image", imageFile);
+        const { data } = await api.post("/upload", formDataUpload);
+        finalImageUrl = data.url;
+      }
+
+      if (!finalImageUrl) {
+        toast.error("Please upload a product image!");
+        setSaving(false);
+        return;
+      }
+
+      const payload = {
+        ...formData,
+        image: finalImageUrl,
+        price: Number(formData.price),
+        originalPrice: formData.originalPrice
+          ? Number(formData.originalPrice)
+          : 0,
+        stock: Number(formData.stock),
+      };
+
+      if (isEdit) {
+        await api.put(`/products/${id}`, payload);
+        toast.success("Product updated successfully!");
+      } else {
+        await api.post("/products", payload);
+        toast.success("Product created successfully!");
+      }
+      
+      navigate("/admin/products");
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to save product');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <>
+    <Fragment>
       <div className="bg-white rounded-2xl shadow-sm border border-app-border overflow-hidden">
         <div className="px-6 py-5 border-b border-app-border flex items-center gap-4">
           <Link
@@ -223,6 +289,6 @@ export default function AdminProductForm() {
           </form>
         )}
       </div>
-    </>
+    </Fragment>
   );
 }

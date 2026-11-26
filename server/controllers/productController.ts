@@ -98,9 +98,7 @@ export const getProduct = async (req: Request, res: Response) => {
 //POST /api/products
 export const createProduct = async (req: Request, res: Response) => {
   const product = await prisma.product.create({ data: req.body });
-  res
-    .status(201)
-    .json({ message: "Product created", product: product });
+  res.status(201).json({ message: "Product created", product: product });
 };
 
 //PUT /api/products/:id
@@ -114,6 +112,9 @@ export const updateProduct = async (req: Request, res: Response) => {
 
 //DELETE /api/products/:id
 export const deleteProduct = async (req: Request, res: Response) => {
-  await prisma.product.delete({ where: { id: req.params.id as string } });
-  res.json({ message: "Product deleted" });
+  await prisma.product.update({
+    where: { id: req.params.id as string },
+    data: { stock: Number(0) },
+  });
+  res.json({ message: "Product updated" });
 };

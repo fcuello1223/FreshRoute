@@ -27,7 +27,17 @@ uploadRouter.post(
       });
       res.json({ url: result.secure_url });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      console.error("CLOUDINARY UPLOAD ERROR:");
+      console.dir(error, { depth: null });
+
+      console.error("Error message:", error.message);
+      console.error("HTTP code:", error.http_code);
+      console.error("Error details:", error.error);
+
+      return res.status(500).json({
+        message: error.message,
+        http_code: error.http_code,
+      });
     }
   },
 );
